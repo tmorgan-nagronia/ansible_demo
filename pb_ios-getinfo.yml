@@ -1,0 +1,38 @@
+#!/usr/local/bin/ansible-playbook -f 10
+---
+- name: gather information from devices
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Gather facts (IOS)
+    ios_facts:
+    register: ios_facts
+
+  - name: Print all facts
+    debug:
+      var: ios_facts
+
+  - name: Get IOS Variables
+    ios_command:
+      commands:
+        # Uptime
+        - show ver | i day|hour|min
+    register: ios_vars
+
+  - name: Print IOS Variables
+    debug:
+      var: ios_vars
+
+  - name: Set Additional IOS Facts
+    set_fact:
+      ansible_net_uptime: "{{ ios_vars.stdout[0].split('\n')[0].split(' is ')[1] }}"
+
+  - name: Display some facts
+    debug:
+      msg:
+      - "Hostname: {{ ansible_net_hostname }} "
+      - "Platform: {{ ansible_net_model }} "
+      - "OS: {{ ansible_net_version }} "
+      - "S/N: {{ ansible_net_serialnum }} "
+      - "Uptime: {{ ansible_net_uptime }} "

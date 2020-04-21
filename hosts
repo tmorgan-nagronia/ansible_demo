@@ -1,0 +1,32 @@
+all:
+  children:
+    asda:
+      children:
+        routers:
+          hosts:
+            CSR01:
+              ansible_host: 192.168.125.131
+              ansible_network_os: ios
+        switches:
+          hosts:
+            SW01:
+              ansible_host: 192.168.1.11
+              ansible_network_os: ios
+        webservers:
+          hosts:
+            web01:
+              ansible_host: 10.1.20.5
+      vars:
+        customer_name: ASDA Ltd
+        domain-name: asda.com
+    tesco:
+      children:
+      vars:
+        ansible_ssh_user: srv_ansible
+        customer_name: Tesco Ltd
+        domain_name: tesco.com
+  vars:
+    ansible_connection: network_cli
+    ansible_user: ansible
+    ansible_password: WeLoveAnsible01
+    ansible_become_password: Ansible101
