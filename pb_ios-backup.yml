@@ -1,0 +1,37 @@
+#!/usr/local/bin/ansible-playbook -f 10
+---
+- name: Backup
+  hosts: all
+
+  vars_prompt:
+    - name: username
+      prompt: "Please provide your username"
+      private: no
+
+    - name: password
+      prompt: "Please provide your password"
+      private: yes
+
+    - name: pre_or_post
+      prompt: "Pre or Post Change (Pre/Post)"
+      private: no
+
+    - name: rfc_number
+      prompt: "Jira RFC Reference (ONC-###)"
+      private: no
+
+
+  tasks:
+  - name: Commands (IOS)
+    ios_command:
+      commands:
+        - sh run
+      username: "{{ username }}"
+      password: "{{ password }}"
+    register: config
+
+  - name: Save "show run" output to backup file.
+    copy:
+      content: "{{ config.stdout[0] }}"
+    #  dest: "backups/{{ ansible_date_time.date }}_{{ inventory_hostname }}_{{ pre_or_post }}{{ rfc_number }}.txt"
+      dest: "backups/{{ inventory_hostname }}_{{ pre_or_post }}{{ rfc_number }}.txt"

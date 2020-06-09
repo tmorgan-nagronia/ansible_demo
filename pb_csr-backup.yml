@@ -1,0 +1,34 @@
+---
+  - name: Backup
+    hosts: routers
+
+    vars_prompt:
+
+      - name: pre_or_post
+        prompt: "Pre or Post Change (Pre/Post)"
+        private: no
+
+      - name: rfc_number
+        prompt: "Jira RFC Reference (ONC-###)"
+        private: no
+
+
+    tasks:
+    - name: Disable File Prompts
+      ios_command:
+        commands:
+          - conf t
+          - file prompt quiet
+          - end
+
+    - name: Copy CSR to ftp
+      ios_command:
+        commands:
+          - copy run ftp://{{ ansible_ftp_user }}:{{ ansible_ftp_pass }}@{{ ftp_backup_server }}/
+
+    - name: Enable File Prompts
+      ios_command:
+        commands:
+          - conf t
+          - no file prompt quiet
+          - end

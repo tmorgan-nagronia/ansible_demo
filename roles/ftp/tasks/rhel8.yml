@@ -1,0 +1,33 @@
+---
+  - name: ftp
+    dnf:
+      name: vsftpd
+      state: present
+
+  - name: backup-vsftpd.conf
+    command: mv /etc/vsftpd/vsftpd.conf /etc/vsftpd/vsftpd.conf_orig
+
+  - name: copy-vsftpd.conf-file
+    copy:
+      src: vsftpd.conf
+      dest: /etc/vsftpd/
+      mode: 0600
+
+  - name: open-firewall
+    firewalld:
+      service: ftp
+      zone: public
+      permanent: true
+      state: enabled
+
+  - name: firewall-restart
+    service:
+      name: firewalld
+      state: restarted
+
+
+  - name: start-vsftpd-service
+    service:
+      name: vsftpd
+      state: started
+      enabled: yes

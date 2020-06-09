@@ -1,0 +1,22 @@
+#!/usr/local/bin/ansible-playbook -f 10
+---
+- name: set login banner on devices
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Setlogin  Banner (IOS)
+    ios_banner:
+      banner: login
+      text: "{{ lookup('file', 'config_snippits/login_banner.cfg') }}"
+      state: present
+
+  - name: Setexec  Banner (IOS)
+    ios_banner:
+      banner: exec
+      state: absent
+
+  - name: Setmotd  Banner (IOS)
+    ios_banner:
+      banner: motd
+      state: absent

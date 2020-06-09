@@ -1,0 +1,5 @@
+- hosts: ftpservers
+  become: yes
+  roles:
+    - common
+    - ftp

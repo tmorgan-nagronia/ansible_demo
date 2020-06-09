@@ -1,0 +1,5 @@
+---
+  - name: install=-apache
+    apt:
+      name: httpd
+      state: installed

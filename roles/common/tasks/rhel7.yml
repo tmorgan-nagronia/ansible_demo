@@ -1,0 +1,4 @@
+---
+  - name: centos-set-timezone
+    timezone:
+      name: UTC

@@ -1,0 +1,29 @@
+---
+  - name: http
+    dnf:
+      name: httpd
+      state: present
+
+  - name: open-firewall
+    firewalld:
+      service: http
+      zone: public
+      permanent: true
+      state: enabled
+
+  - name: firewall-restart
+    service:
+      name: firewalld
+      state: restarted
+
+  - name: copy-index-file
+    copy:
+      src: index.html
+      dest: /var/www/html/
+      mode: 0777
+
+  - name: start-apache-service
+    service:
+      name: httpd
+      state: started
+      enabled: yes

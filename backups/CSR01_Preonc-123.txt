@@ -1,0 +1,217 @@
+Building configuration...
+
+Current configuration : 4479 bytes
+!
+! Last configuration change at 21:25:29 UTC Tue Apr 28 2020 by ansible
+!
+version 16.9
+service timestamps debug datetime msec
+service timestamps log datetime msec
+platform qfp utilization monitor load 80
+no platform punt-keepalive disable-kernel-core
+platform console virtual
+!
+hostname balls
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local 
+!
+!
+!
+!
+!
+aaa session-id common
+!
+!
+!
+!
+!
+!
+!
+ip domain name balls.com
+!
+!
+!
+login on-success log
+!
+!
+!
+!
+!
+!
+!
+subscriber templating
+! 
+! 
+! 
+! 
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-3761371165
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3761371165
+ revocation-check none
+ rsakeypair TP-self-signed-3761371165
+!
+!
+crypto pki certificate chain TP-self-signed-3761371165
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 33373631 33373131 3635301E 170D3230 30343238 31393438 
+  31315A17 0D333030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D33 37363133 
+  37313136 35308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201 
+  0A028201 0100A414 037DC679 56013121 EFD12479 DB9D61ED 082496E0 366FC689 
+  A59A82A0 3A27C9C5 7A2249DE D7F27F96 2F7A1937 42A3118D 7B939DA2 CEF27667 
+  7F3F9763 D25EE8E3 6F39434B 9B936750 FA6C3C8C 492BACCC A0843AD1 09ACAFB2 
+  8168B838 EB7D00DE 7EE82764 A12AAEA8 5848B0C6 BEEA0405 148A5095 68AB3475 
+  7B6E5422 193E636E 79D05135 D98EB400 F8D40784 724C5C82 2CAA116A B4755BF3 
+  C47AF890 5B443131 3B4EF648 BF6176CD C6CFD5F6 403341A8 AAB19D13 A1A6C24E 
+  3CB9547A A952319E 31819BC1 29E32AA9 A8D6D37A 4C3FD55D 5C78400C DD7AD5FE 
+  AF0902AE E9B89B7C 028D739C 6DD98DB4 5CE9BA08 8CF3EBAB 54FA97CA C8D57446 
+  95D9FC26 61370203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 
+  301F0603 551D2304 18301680 14472A80 D26CF009 76A7B5F3 98895506 D68DBA13 
+  35301D06 03551D0E 04160414 472A80D2 6CF00976 A7B5F398 895506D6 8DBA1335 
+  300D0609 2A864886 F70D0101 05050003 82010100 9194CB13 1750834B A6C7419A 
+  07CE94E0 23024D80 8A46FC24 286DB653 C5953460 CCD143F2 8729FED6 A1BB0A81 
+  E33A4FF0 64A677FB C30BC5D2 035DDE32 1D47A1BD BC0BBDE4 D7DB9ECC 46AD4C0F 
+  65A907CA 1E6DD7E0 946E1017 88DD1F91 3A420784 79F4E066 656F3647 C8081741 
+  653A0E37 219B34DC 9944AC61 0C0E51F2 51522085 9F48BC4F E96679A8 728208F1 
+  9AB7747E 143344C7 3E9469D6 BEE57F25 8902D6F7 0B9519F6 73F523F5 778D91C2 
+  DF1B60B4 01237B75 C146EC04 C5241C8D 906027BA CD412E28 B57359AA 96E42294 
+  628FE487 D2E11669 C0F1A7F9 89A29641 0FB54150 2F0A7B9E 106D2E00 4D930EE1 
+  CE4C57F5 0E724046 FFD71FCD 55908D86 4FB972C2
+  	quit
+!
+!
+!
+!
+!
+!
+!
+!
+license udi pid CSR1000V sn 915AGLFYRX4
+license boot level ax
+no license smart enable
+diagnostic bootup level minimal
+!
+spanning-tree extend system-id
+!
+!
+!
+username ansible privilege 15 secret 5 $1$Jzgn$A3Mfm.fKYZ8GaGbc6FwdP/
+!
+redundancy
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+! 
+!
+!
+interface GigabitEthernet1
+ description bridged
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet2
+ description NAT
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+interface GigabitEthernet3
+ description host-only
+ ip address dhcp
+ negotiation auto
+ no mop enabled
+ no mop sysid
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+banner login ^C
+#######################################################################
+
+#                                                                     #
+
+# Warning! You have reached a system to which access is restricted    #
+
+# to authorised users only. Any unauthorised attempt to pass this     #
+
+# point will be considered a criminal offence under the terms of      #
+
+# The Computer Misuse Act 1990 and we will prosecute.                 #
+
+# Access and use is logged and monitored and may be used as evidence. #
+
+#                                                                     #
+
+#######################################################################
+^C
+!
+line con 0
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ logging synchronous
+ transport input ssh
+line vty 5 15
+ logging synchronous
+ transport input ssh
+!
+!
+!
+!
+!
+!
+end
