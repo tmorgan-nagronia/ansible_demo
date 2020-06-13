@@ -17,7 +17,7 @@
       private: no
 
     - name: rfc_number
-      prompt: "Jira RFC Reference (ONC-###)"
+      prompt: "RFC Reference (#####)"
       private: no
 
 
@@ -25,7 +25,7 @@
   - name: Commands (IOS)
     ios_command:
       commands:
-        - sh run
+        - show running-config
       username: "{{ username }}"
       password: "{{ password }}"
     register: config
