@@ -14,6 +14,10 @@
 
 
     tasks:
+    - name: Ansible date fact example
+      debug:
+        var=ansible_date_time.year
+    
     - name: Disable File Prompts
       ios_command:
         commands:
