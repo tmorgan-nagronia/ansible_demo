@@ -17,24 +17,45 @@ all:
 
         ## ASDA - Web Servers
         ## ---------------------------------------------------------------------
-        webservers:
+        web_servers:
           hosts:
             web01:
-              ansible_host: 192.168.56.101
+              ansible_host: 192.168.56.102
+              root_password: WeLoveAnsible01
+              root_password_sha512: $6$.HcYW4mx4K04ExE9$uOa.SdUoOFtDHImU0k8znmfn01/3/x/CxWpUHAhTKUBOqb621EeMcHWsShI4uqT.lO0zEamJSypK7skBcINVs/
 
         ## ASDA - FTP Servers
         ## ---------------------------------------------------------------------
-        ftpservers:
+        ftp_servers:
           hosts:
             ftp01:
               ansible_host: 192.168.56.104
+              root_password: WeLoveAnsible01
+              root_password_sha512: $6$.HcYW4mx4K04ExE9$uOa.SdUoOFtDHImU0k8znmfn01/3/x/CxWpUHAhTKUBOqb621EeMcHWsShI4uqT.lO0zEamJSypK7skBcINVs/
+
+        ## ASDA - FreeRADIUS Servers
+        ## ---------------------------------------------------------------------
+        radius_servers:
+          hosts:
+            radius01:
+              ansible_host: 192.168.56.101
+              root_password: WeLoveAnsible01
+              root_password_sha512: $6$.HcYW4mx4K04ExE9$uOa.SdUoOFtDHImU0k8znmfn01/3/x/CxWpUHAhTKUBOqb621EeMcHWsShI4uqT.lO0zEamJSypK7skBcINVs/
 
       ## ASDA - Variables
       ## -----------------------------------------------------------------------
       vars:
         ftp_backup_server: 192.168.56.104
-        ansible_ftp_user: ansible
+        ansible_ftp_user: ftpuser
         ansible_ftp_pass: WeLoveAnsible01
+
+        ansible_ssh_user: svc_provisioning
+        ansible_ssh_pass: WeLoveAnsible01
+        ansible_ssh_pass_sha512: $6$.HcYW4mx4K04ExE9$uOa.SdUoOFtDHImU0k8znmfn01/3/x/CxWpUHAhTKUBOqb621EeMcHWsShI4uqT.lO0zEamJSypK7skBcINVs/
+
+        ansible_ssh_private_key_file: misc/keys/id_rsa
+        ansible_ssh_user_first_run: root
+        ansible_ssh_pass_first_run: Password01
 
 
     ## =========================================================================
@@ -54,14 +75,14 @@ all:
 
         ## Tesco - Web Servers
         ## ---------------------------------------------------------------------
-        webservers:
+        web_servers:
           hosts:
             web01:
               ansible_host: 192.168.56.102
 
         ## Tesco - FTP Servers
         ## ---------------------------------------------------------------------
-        ftpservers:
+        ftp_servers:
           hosts:
             ftp01:
               ansible_host: 192.168.56.105

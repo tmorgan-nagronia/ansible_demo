@@ -1,0 +1,26 @@
+---
+## =============================================================================
+## File Name: roles/init/tasks/main.yml
+## Purpose: The purpose of this file is to apply the init role to the server.
+##          This has to be done as a seperate role as gather_facts can not be
+##          enabled when this role is runs. Normally roles require the gather
+##          facts module to determine the operating system.
+##
+## -----------------------------------------------------------------------------
+## Revision Control
+## Version | Date     | Author     | Description
+## 0.1     | 20200520 | TMorgan    | Iniital release - not tested
+## 1.0     | 20200522 | TMorgan    | Initial release - tested
+##
+## -----------------------------------------------------------------------------
+## References
+##
+## =============================================================================
+## Copyright 2020 Thomas Morgan. All Rights Reserved.
+## =============================================================================
+
+- hosts: all
+  become: yes
+  gather_facts: no
+  roles:
+    - init

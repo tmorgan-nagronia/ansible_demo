@@ -1,0 +1,87 @@
+---
+## =============================================================================
+## File Name: roles/init/tasks/main.yml
+## Purpose: The purpose of this file is to configure the svc_provisoning user.
+##          This has to be done as a seperate role as gather_facts can not be
+##          enabled when this role is run. Normally roles require the gather
+##          facts module to determine the operating system.
+##
+## -----------------------------------------------------------------------------
+## Revision Control
+## Version | Date     | Author     | Description
+## 0.1     | 20200520 | TMorgan    | Iniital release - not tested
+## 1.0     | 20200522 | TMorgan    | Initial release - tested
+##
+## -----------------------------------------------------------------------------
+## References
+##
+## =============================================================================
+## Copyright 2020 Thomas Morgan. All Rights Reserved.
+## =============================================================================
+
+## This task will see if ansible can connect to the server using the SSH key.
+## It will store the result in the connection_test_result varaible for future
+## use. The script will use this variable to determine if the server is going
+## through its initial setup and modify the username and password as required.
+- name: Check provisioning account connectivity.
+  command: ssh -i misc/keys/id_rsa {{ ansible_ssh_user }}@{{ ansible_host }} -o ConnectTimeout=10 -o PreferredAuthentications=publickey -o PubkeyAuthentication=yes echo worked
+  register: connection_test_result
+  connection: local
+  become: no
+  ignore_errors: yes
+  changed_when: False
+
+## This task will use the result of the connection test to determine if the
+## first_run username and password need to be used. If this is the case it will
+## update the vriables as required.
+- name: Swap the credentials details to first_run credentials.
+  connection: local
+  set_fact:
+    ansible_ssh_user_holding: "{{ ansible_ssh_user }}"
+    ansible_ssh_user: "{{ ansible_ssh_user_first_run }}"
+    ansible_ssh_pass: "{{ ansible_ssh_pass_first_run }}"
+  when: connection_test_result is failed
+
+## This task will verify the configuration of the the "svc_provisioning" user.
+## If this user is not present it will be created. This task will only run if
+## the connection test failed.
+- name: RHEL8 - Create a svc_provisioning user with sudo privileges
+  user:
+    name: svc_provisioning
+    password: "{{ ansible_ssh_pass_sha512 }}"
+    state: present
+    groups: wheel
+    append: true
+    create_home: true
+    shell: /bin/bash
+  when: connection_test_result is failed
+  no_log: true
+
+## This task will verify the ssh key is present for the "svc_provisioning" user.
+## If they are not present they will be created. This task will only run if the
+## connection test failed.
+- name: Set authorized key for remote user
+  authorized_key:
+    user: svc_provisioning
+    state: present
+    key: "{{ lookup('file', '../../misc/keys/id_rsa.pub') }}"
+  when: connection_test_result is failed
+
+## This task will verify the configuration of the
+## /etc/sudoers.d/svc_provisioning file. In the event this file is not present
+## it will be created. This task will only run if the connection test failed.
+- name: RHEL8 - Configure a sudoers file for the provisioning user.
+  copy:
+    src: etc/sudoers.d/svc_provisioning
+    dest: /etc/sudoers.d/
+    mode: 0440
+  when: connection_test_result is failed
+
+## This task will set the root users password to a password that is unique to
+## that server.
+- name: RHEL8 - Configure root user password.
+  user:
+    name: root
+    password: "{{ root_password_sha512 }}"
+  when: connection_test_result is failed
+  no_log: true
