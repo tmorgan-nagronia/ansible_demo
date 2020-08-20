@@ -1,0 +1,4 @@
+---
+  - name:  RHEL7 - centos-set-timezone
+    timezone:
+      name: UTC

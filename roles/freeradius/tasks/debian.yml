@@ -1,0 +1,5 @@
+---
+  - name: Debian - install=-apache
+    apt:
+      name: httpd
+      state: installed
