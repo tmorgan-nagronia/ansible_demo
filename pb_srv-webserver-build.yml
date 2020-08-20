@@ -1,4 +1,4 @@
-- hosts: webservers
+- hosts: web_servers
   become: yes
   roles:
     - common

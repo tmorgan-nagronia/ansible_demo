@@ -1,63 +1,81 @@
 ---
-  - name: centos-set-timezone
-    timezone:
-      name: UTC
+## This task will update the hostname inline with the contents of the hosts
+## file. This is important to ensure the same hostname for the nodde is used
+## consistantly across the infrastructure. It will return the result of this to
+##  the hostname_task_result variable for future use.
+- name: RHEL8 - Update hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+  register: hostname_task_result
 
+- name: RHEL8 - Update hosts file.
+  template:
+    src: etc/hosts.j2
+    dest: /etc/hosts
 
-  - name: set-Hostname
-    hostname:
-      name: "{{ inventory_hostname }}"
-    register: hostname_task_result
+## This task will update the server operating system and components to the
+## latest version. It will return the result of this to the osupdate_task_result
+## variable for future use.
+- name: RHEL8 - Update server OS
+  dnf:
+    name: '*'
+    state: latest
+  register: osupdate_task_result
 
-  - name: debug-show-hostname-host_task_result
-    debug:
-      var: hostname_task_result
+## This task will set the servers timezone to UTC. As Nettitude operates
+## infrastructure across multiple timezones, the timezone will be configured to
+## UTC. This will simplify log management when logs are colated to a central
+## location.
+- name: RHEL8 - Configure server timezone.
+  timezone:
+    name: UTC
 
-#  - name: update-os
-#    dnf:
-#      name: '*'
-#      state: latest
-#    register: update_task_result
+- name: RHEL8 - Install dnf-automatic
+  dnf:
+    name: dnf-automatic
+    state: installed
+  register: dnf_automatic_result
 
-  - name: debug-update-os-result
-    debug:
-      var: update_task_result
+- name: RHEL8 - Configure dnf-automatic
+  copy:
+    src: automactic.conf
+    dest: /etc/dnf/
+    mode: 0644
+  when: dnf_automatic_result is changed
 
-  - name: install-dnf-automatic
-    dnf:
-      name: dnf-automatic
-      state: installed
-    register: dnf_automatic_result
+- name: RHEL8 - Start dnf-automatic
+  service:
+    name: dnf-automatic
+    state: started
+    enabled: yes
+  when: dnf_automatic_result is changed
 
-  - name: copy-dnf-configuration-file
-    copy:
-      src: automactic.conf
-      dest: /etc/dnf/
-      mode: 0644
-    when: dnf_automatic_result is changed
+## This task will instruct the operating system to reboot if it was updated or
+## if the hostname was changed.
+- name: RHEL8 - Reboot if the OS was updated.
+  shell: "sleep 5 && reboot"
+  async: 1
+  poll: 0
+  when: (hostname_task_result is changed) or (osupdate_task_result is changed)
 
-  - name: start-dnf-service
-    service:
-      name: dnf-automatic
-      state: started
-      enabled: yes
-    when: dnf_automatic_result is changed
+## This task will pause the script for 30 seconds to ensure the operating system
+## has had time to shutdown. If this is not done the next task may run too soon
+## and detect the opperating system is back online as its not yet shutdown. This
+## task will only run if the OS is rebooting.
+- name: RHEL8 - Pause script for 30 seconds
+  pause:
+    seconds: 30
+  when: (hostname_task_result is changed) or (osupdate_task_result is changed)
 
-  - name: reboot-if-required
-    shell: "sleep 5 && reboot"
-    async: 1
-    poll: 0
-    when: (hostname_task_result is changed) # or (update_task_result is changed)
-
-  - name: pause
-    pause:
-      seconds: 30
-    when: (hostname_task_result is changed) #or (update_task_result is changed)
-
-  - name: try-reconnect
-    wait_for_connection:
-      connect_timeout: 20
-      sleep: 5
-      delay: 5
-      timeout: 300
-    when: (hostname_task_result is changed) #or (update_task_result is changed)
+## This task waits for the operating system to start responding again. It waits
+## 20 seconds for a response. It will wait a maximum of 5 miniutes for a
+## response. If the host does not respond within 5 miniutes the script will
+## encounter an error. This error is not handled and therefore the script will
+## stop being processed. This task will only run if the OS is rebooting.
+- name: RHEL8 - Wait for the reboot to complete if there was a change.
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: (hostname_task_result is changed) or (osupdate_task_result is changed)

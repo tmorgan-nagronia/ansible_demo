@@ -1,0 +1,5 @@
+- hosts: radius_servers
+  become: yes
+  roles:
+    - common
+    - freeradius

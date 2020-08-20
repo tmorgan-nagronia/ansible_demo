@@ -1,4 +1,4 @@
-- hosts: ftpservers
+- hosts: ftp_servers
   become: yes
   roles:
     - common

@@ -57,6 +57,10 @@ all:
         ansible_ssh_user_first_run: root
         ansible_ssh_pass_first_run: Password01
 
+        srv_ntp:
+        - {ipv4: 95.215.175.2, hostname: 0.pool.ntp.org}
+        - {ipv4: 109.74.192.233, hostname: 1.pool.ntp.org}
+        - {ipv4: 212.71.234.20, hostname: 2.pool.ntp.org}
 
     ## =========================================================================
     ## Customer: Tesco

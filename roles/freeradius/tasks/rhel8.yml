@@ -5,13 +5,13 @@
       state: present
     register: freeradius_installed
 
-  - name:  RHEL8 - Install freeradius utilities
+  - name: RHEL8 - Install freeradius utilities
     dnf:
       name: freeradius-utils
       state: present
     when: freeradius_installed is changed
 
-  - name: RHEL8 -  Start freeradius
+  - name: RHEL8 - Start freeradius
     service:
       name: radiusd
       state: started
@@ -20,24 +20,24 @@
 
   - name: RHEL8 - Copy radius.xml service file.
     copy:
-      src: radius.xml
+      src: etc/firewalld/services/radius.xml
       dest: /etc/firewalld/services/
     when: (freeradius_installed is changed)
 
-  - name:  RHEL8 - firewall-restart
+  - name: RHEL8 - firewall-restart
     service:
       name: firewalld
       state: restarted
 
-  - name:  RHEL8 - open-firewall
+  - name: RHEL8 - open-firewall
     firewalld:
-      service: http
+      service: radius
       zone: public
       permanent: true
       state: enabled
     when: (freeradius_installed is changed)
 
-  - name:  RHEL8 - firewall-restart
+  - name: RHEL8 - firewall-restart
     service:
       name: firewalld
       state: restarted
@@ -46,11 +46,10 @@
     copy:
       remote_src: true
       src: /etc/raddb/radiusd.conf
-      dest: /etc/raddb/radiusd.conf.Example
+      dest: /etc/raddb/radiusd.conf.example
 
   - name: RHEL8 - upload radius.conf
     copy:
-      src: radiusd.conf
+      src: etc/raddb/radiusd.conf
       dest: /etc/raddb/
       mode: 0640
-    
